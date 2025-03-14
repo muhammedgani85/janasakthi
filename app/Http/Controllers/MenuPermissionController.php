@@ -14,6 +14,7 @@ class MenuPermissionController extends Controller
      */
     public function index()
     {
+      
 
       $userRole =$userData = session('user_data')->role; // Assuming the role is stored in the 'role' field of the User model
 

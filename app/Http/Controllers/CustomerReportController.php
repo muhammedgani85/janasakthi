@@ -43,26 +43,41 @@ class CustomerReportController extends Controller
         $ref_customer = Customer::all();
 
         // Initialize the customer query with default filters
-        $query = Customer::with('branch', 'customerpincode', 'customercity')
-        ->whereBetween('customers.created_at', [$fromDate, $toDate]);
+        $query = Customer::with('branch', 'customerpincode', 'customercity', 'addedByUser', 'updatedByUser', 'sandhas');
 
-    if ($request->filled('status')) {
-        $query->where('customers.status', $request->input('status'));
-    }
-    if ($request->filled('city')) {
-        $query->where('customers.city', $request->input('city'));
-    }
-    if ($request->filled('pincode')) {
-        $query->where('customers.pincode', $request->input('pincode'));
-    }
-    if ($request->filled('r_name')) {
-        $query->where('customers.r_name', $request->input('r_name'));
-    }
-    if ($request->filled('location_id')) {
-        $query->where('customers.location_id', (int)$request->input('location_id'));
-    }
+        // Log the input parameters to debug
 
-    $customers = $query->get();
+
+        if ($request->filled('status')) {
+            $query->where('customers.status', '=', trim($request->input('status')));
+        }
+
+        if ($request->filled('city')) {
+            $query->where('customers.city', '=', strtolower(trim($request->input('city'))));
+        }
+
+        if ($request->filled('pincode')) {
+            $query->where('customers.pincode', '=', trim($request->input('pincode')));
+        }
+
+        if ($request->filled('r_name')) {
+            $query->where('customers.r_name', '=', trim($request->input('r_name')));
+        }
+
+        if ($request->filled('location_id')) {
+            $query->where('customers.location_id', (int)$request->input('location_id'));
+        }
+
+        if ($request->filled('sandha')) {
+          $query->where('customers.sandha_plan', (int)$request->input('sandha'));
+        }
+
+        $customers = $query->get();
+
+        // Log the query to debug
+
+
+
 
 
 
@@ -126,12 +141,12 @@ class CustomerReportController extends Controller
 
     public function getCustomerDetails(Request $request)
 {
-    $customer = Customer::find($request->id);
+    $customer = User::find($request->id);
 
     if ($customer) {
         return response()->json([
             'r_phone' => $customer->phone_number,
-            'r_address' => $customer->communication_address,
+            'r_address' => $customer->address,
         ]);
     }
 

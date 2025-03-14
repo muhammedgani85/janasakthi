@@ -118,10 +118,13 @@
       contentType: false,
       processData: false,
       success: function(response) {
-        // alert(response.success);
-        swal("Done!", response.success, "success");
-        //location.reload();
-        window.location.href = "{{ url('/sandhas')}}";
+
+        if (response.success) {
+        swal("Done!", response.message, "success"); // Show success message
+    } else {
+        swal("Done!", response.message, "error"); // Show error message
+    }
+        // window.location.href = "{{ url('/pincodes')}}";
       },
       error: function(response) {
 

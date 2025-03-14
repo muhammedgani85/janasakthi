@@ -10,7 +10,7 @@ class Customer extends Model
 {
     use HasFactory, SoftDeletes;
     protected $date = ['deleted_at'];
-    protected $fillable = ['customer_id', 'initial', 'first_name', 'last_name', 'father_name', 'spouse_name', 'gender', 'dob', 'marital_status', 'phone_number', 'emergency_number', 'email_id', 'city', 'permanent_address', 'communication_address', 'ward', 'aadhar_number', 'driving_license_number', 'pan', 'occupation_id', 'occupation_type', 'job_type_details', 'r_name', 'r_phone', 'r_address', 'r_name1', 'r_phone1', 'r2_address', 'r_others', 'customer_photo', 'customer_aadharr', 'customer_other', 'account_holder_name', 'bank_name', 'account_number', 'ifsc', 'gpay_no', 'location_id', 'status','state_id','district_id','city_id','pincode','sandha_plan','join_date'];
+    protected $fillable = ['customer_id', 'initial', 'first_name', 'last_name', 'father_name', 'spouse_name', 'gender', 'dob', 'marital_status', 'phone_number', 'emergency_number', 'email_id', 'city', 'permanent_address', 'communication_address', 'ward', 'aadhar_number', 'driving_license_number', 'pan', 'occupation_id', 'occupation_type', 'job_type_details', 'r_name', 'r_phone', 'r_address', 'r_name1', 'r_phone1', 'r2_address', 'r_others', 'customer_photo', 'customer_aadharr', 'customer_other', 'account_holder_name', 'bank_name', 'account_number', 'ifsc', 'gpay_no', 'location_id', 'status','state_id','district_id','city_id','pincode','sandha_plan','join_date','added_by','updated_by','receipt_number'];
 
 
     // Define the relationship with the Loan model
@@ -66,6 +66,47 @@ public function customerpincode()
 public function customercity()
 {
     return $this->belongsTo(Cities::class, 'city');
+}
+
+public function addedByUser()
+{
+    return $this->belongsTo(User::class, 'added_by');
+}
+
+public function updatedByUser()
+{
+    return $this->belongsTo(User::class, 'updated_by');
+}
+
+public function sandhas()
+{
+    return $this->belongsTo(Sandha::class, 'sandha_plan');
+}
+
+
+public function subscriptionPayments()
+{
+    return $this->hasMany(SubscriptionPayment::class, 'customer_id');
+}
+
+public function subscriptionPlan()
+{
+    return $this->belongsTo(Sandha::class, 'sandha_plan');
+}
+
+public function city()
+{
+    return $this->belongsTo(Cities::class, 'city','id');
+}
+
+public function district()
+{
+    return $this->belongsTo(District::class, 'district_id');
+}
+
+public function incharge()
+{
+    return $this->belongsTo(User::class, 'r_name');
 }
 
 

@@ -33,6 +33,7 @@ class CustomerManagement extends Controller
         $location = session('user_data')->location;
 
         $role = session('user_data')->role;
+        $user_id = session('user_data')->id;
 
         $is_check = $this->check_role($role);
 
@@ -40,12 +41,30 @@ class CustomerManagement extends Controller
 
 
       if($is_check){
-        $customers = Customer::orderBy('id', 'DESC')->get();
+       // $customers = Customer::orderBy('id', 'DESC')->get();
+       $customers = Customer::with(['city', 'district','customerpincode','incharge'])
+                            ->where('status','Active')
+                            ->whereNotNull('first_name')
+                            ->whereNotNull('last_name')
+                            ->whereNotNull('district_id')
+                            ->whereNotNull('pincode')
+
+                            ->where('status','Active')
+                            ->orderBy('id', 'DESC')->get();
 
       } else {
-        $customers = Customer::orderBy('id', 'DESC')->where('location_id', $location)->get();
+       // $customers = Customer::orderBy('id', 'DESC')->where('location_id', $location)->get();
+       $customers = Customer::with(['city', 'district','customerpincode','incharge'])
+                               ->where('status','Active')
+                               ->whereNotNull('first_name')
+                               ->whereNotNull('last_name')
+                               ->whereNotNull('district_id')
+                               ->whereNotNull('pincode')
+                               ->where('r_name',$user_id)
+                               ->orderBy('id', 'DESC')->get();
 
       }
+     // dd($customers);
 
         $totalCustomers = $customers->count();
 
@@ -62,7 +81,8 @@ class CustomerManagement extends Controller
 
 
 
-        return view('content.customermanagement.index', compact('customers', 'todayCustomers', 'weekCustomers', 'monthCustomers'));
+
+        return view('content.customermanagement.index', compact('customers', 'todayCustomers', 'weekCustomers', 'monthCustomers','is_check'));
     }
 
     /**
@@ -72,108 +92,122 @@ class CustomerManagement extends Controller
 
     {
 
-        try {
-            $data = session('user_data');
+      try {
+        $data = session('user_data');
 
+        if ($data) {
+            $location = $data->location;
+            $location_short_code = Branch::where('id', $location)->first();
+            $locationCode = $location_short_code->branch_prefix . '-C';
 
-            if ($data) {
-                $location = $data->location;
-                $location_short_code = Branch::where('id', $location)->first();
-                $locationCode = $location_short_code->branch_prefix . '-C'; // Adjust based on your location logic
-                $customerCount = Customer::where('location_id', $location)->count();
-                $customerId = $locationCode . '-' . str_pad($customerCount + 1, 4, '0', STR_PAD_LEFT);
-                $occupations = OccupationModel::where('status', 'Active')->get();
-                $branchs = Branch::where('status', 'Active')->get();
-                $district = District::where('status', 'Active')->get();
-                $city = Cities::get();
-                $states = State::get();
-                $pincode = Pincode::get();
-                $sandha_details = Sandha::get();
-                $employee = [];
-                $ref_customers = Customer::get();
-                return view('content.customermanagement.newcustomer', compact('occupations', 'branchs', 'employee', 'customerId', 'location','district','city','states','pincode','sandha_details','ref_customers'));
-            } else {
-                return redirect()->route('/login_verfication');
-            }
-        } catch (Exception $e) {
-            Log::debug($e->getMessage());
+            // Generate the next available ID without saving it
+            $lastCustomer = DB::table('customers')
+                ->where('location_id', $location)
+                ->where('customer_id', 'LIKE', "$locationCode-%")
+                ->selectRaw("MAX(CAST(SUBSTRING_INDEX(customer_id, '-', -1) AS UNSIGNED)) as max_id")
+                ->first();
+
+            $nextId = $lastCustomer->max_id ? $lastCustomer->max_id + 1 : 1;
+            $customerId = $locationCode . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+
+            // Fetch required data for the form
+            $occupations = OccupationModel::where('status', 'Active')->get();
+            $branchs = Branch::where('status', 'Active')->get();
+            $district = District::where('status', 'Active')->get();
+            $city = Cities::get();
+            $states = State::get();
+            $pincode = Pincode::orderby('pin_code', 'ASC')->get();
+            $sandha_details = Sandha::where('status', 'Active')->get();
+            $employee = [];
+            $ref_customers = User::where('role', 18)->get();
+
+            // Return the form with generated ID (not saved yet)
+            return view('content.customermanagement.newcustomer', compact(
+                'occupations', 'branchs', 'employee', 'customerId', 'location',
+                'district', 'city', 'states', 'pincode', 'sandha_details', 'ref_customers'
+            ));
+        } else {
+            return redirect()->route('/login_verfication');
         }
+    } catch (Exception $e) {
+        Log::debug($e->getMessage());
+    }
+
+
     }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'customer_id' => 'required|unique:customers',
-            'initial' => 'required|max:2',
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'father_name' => 'nullable',
-            'spouse_name' => 'nullable',
-            'gender' => 'required',
-            /* 'dob' => 'required|date', */
-            /* 'marital_status' => 'required', */
-            'phone_number' => 'required|digits_between:10,13',
-            'emergency_number' => 'required|digits_between:10,13',
-            /* 'email_id' => 'nullable|email|unique:customers', */
-            'city' => 'required',
-            'permanent_address' => 'required',
-            'communication_address' => 'required',
-            'ward' => 'nullable',
-            'aadhar_number' => 'required|digits:12|unique:customers',
-            /* 'driving_license_number' => 'nullable',
-            'pan' => 'nullable', */
-            'occupation_id' => 'required|exists:occupation_models,id',
-            /* 'occupation_type' => 'required', */
-            /* 'job_type_details' => 'required', */
-            'r_name' => 'nullable',
-            'r_phone' => 'nullable',
-            'r_address' => 'nullable',
-            'r_name1' => 'nullable',
-            'r_phone1' => 'nullable',
-            'r2_address' => 'nullable',
-            'r_others' => 'nullable',
-            'customer_photo' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
-            'customer_aadharr' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
-            'join_date' => 'required|date',
-            /* 'customer_other' => 'nullable|file|mimes:jpg,jpeg,png',
-            'account_holder_name' => 'required',
-            'bank_name' => 'required',
-            'account_number' => 'required|unique:customers',
-            'ifsc' => 'required',
-            'gpay_no' => 'nullable' */
-        ]);
+{
+    $validator = Validator::make($request->all(), [
+        'first_name' => 'required',
+        'last_name' => 'required',
+        'r_name' => 'required',
+        'permanent_address' => 'required',
+        'r_phone' => 'nullable',
+        'r_address' => 'nullable',
+        'r_name1' => 'nullable',
+        'r_phone1' => 'nullable',
+        'r2_address' => 'nullable',
+        'r_others' => 'nullable',
+        'customer_photo' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
+        'customer_aadharr' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
+        'join_date' => 'required|date',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
+    }
 
+    DB::beginTransaction(); // Start transaction
+
+    try {
         $data = $request->all();
 
-
-
+        // Handle file uploads
         if ($request->hasFile('customer_photo')) {
-          $data['customer_photo'] = $request->file('customer_photo')->store('photos', 'public');
-       }
-
-
-
+            $data['customer_photo'] = $request->file('customer_photo')->store('photos', 'public');
+        }
         if ($request->hasFile('customer_aadharr')) {
-          $data['customer_aadharr'] = $request->file('customer_aadharr')->store('photos', 'public');
-       }
-
-
-
+            $data['customer_aadharr'] = $request->file('customer_aadharr')->store('photos', 'public');
+        }
         if ($request->hasFile('customer_other')) {
-          $data['customer_other'] = $request->file('customer_other')->store('photos', 'public');
-       }
+            $data['customer_other'] = $request->file('customer_other')->store('photos', 'public');
+        }
+
+        // Generate Unique Customer ID
+        $location = session('user_data')->location;
+        $location_short_code = Branch::where('id', $location)->first();
+        $locationCode = $location_short_code->branch_prefix . '-C';
+
+        // Locking to prevent duplicate ID generation
+        $lastCustomer = DB::table('customers')
+            ->where('location_id', $location)
+            ->where('customer_id', 'LIKE', "$locationCode-%")
+            ->selectRaw("MAX(CAST(SUBSTRING_INDEX(customer_id, '-', -1) AS UNSIGNED)) as max_id")
+            ->lockForUpdate()
+            ->first();
+
+        $nextId = $lastCustomer->max_id ? $lastCustomer->max_id + 1 : 1;
+        $customerId = $locationCode . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+
+        $data['customer_id'] = $customerId;
+        $data['location_id'] = $location;
 
         Customer::create($data);
 
+        DB::commit(); // Commit transaction
+
         return response()->json(['success' => 'Customer created successfully']);
+    } catch (\Exception $e) {
+        DB::rollBack(); // Rollback transaction on error
+        Log::error($e->getMessage());
+        return response()->json(['error' => 'Something went wrong'], 500);
     }
+}
+
 
 
     /**
@@ -190,7 +224,9 @@ class CustomerManagement extends Controller
     public function edit(string $id)
     {
         $location = session('user_data')->location;
-        $customer = Customer::findOrFail($id);
+      //  $customer = Customer::findOrFail($id);
+          $customer = Customer::with('customerpincode')->findOrFail($id);
+    //  dd($customer);
         $occupations = OccupationModel::where('status', 'Active')->get();
         $city = Cities::get();
         $states = State::get();
@@ -200,7 +236,7 @@ class CustomerManagement extends Controller
         $district = District::where('status', 'Active')->get();
 
 
-        $ref_customers = Customer::get();
+        $ref_customers = User::where('role',18)->get();
 
 
         return view('content.customermanagement.edit_customer', compact('location', 'customer', 'occupations','city','states','pincode','district','sandha_details','branchs','ref_customers'));
@@ -215,28 +251,31 @@ class CustomerManagement extends Controller
 
             $validator = Validator::make($request->all(), [
                 'customer_id' => 'required',
-                'initial' => 'required|max:2',
+               /*  'initial' => 'required|max:2', */
                 'first_name' => 'required',
                 'last_name' => 'required',
                 'father_name' => 'nullable',
                 'spouse_name' => 'nullable',
-                'gender' => 'required',
-                'dob' => 'required|date',
-                'marital_status' => 'required',
-                'phone_number' => 'required|digits_between:10,13',
-                'emergency_number' => 'required|digits_between:10,13',
+                'district_id' => 'required',
+                'r_name' => 'required',
+                /* 'gender' => 'required', */
+                /* 'dob' => 'required|date', */
+                /* 'marital_status' => 'required', */
+                /* 'phone_number' => 'required|digits_between:10,13',
+                'emergency_number' => 'required|digits_between:10,13', */
                 /* 'email_id' => 'nullable|email|unique:customers', */
-                'city' => 'required',
-                'permanent_address' => 'required',
-                'communication_address' => 'required',
-                'ward' => 'nullable',
-                'aadhar_number' => 'required|digits:12',
-                'driving_license_number' => 'nullable',
-                'pan' => 'nullable',
-                'occupation_id' => 'required|exists:occupation_models,id',
+                /* 'city' => 'required', */
+
+
+              /*   'communication_address' => 'required', */
+               /*  'ward' => 'nullable', */
+              /*   'aadhar_number' => 'required|digits:12', */
+                /* 'driving_license_number' => 'nullable',
+                'pan' => 'nullable', */
+             /*    'occupation_id' => 'required|exists:occupation_models,id', */
                 /* 'occupation_type' => 'required', */
                 /* 'job_type_details' => 'required', */
-                'r_name' => 'nullable',
+               /*  'r_name' => 'nullable', */
                 'r_phone' => 'nullable',
                 'r_address' => 'nullable',
                 'r_name1' => 'nullable',

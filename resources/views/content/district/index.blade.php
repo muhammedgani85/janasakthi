@@ -1,6 +1,6 @@
 @extends('layouts/contentNavbarLayout')
 
-@section('title', 'Roles Management')
+@section('title', 'Location Management')
 
 @section('page-script')
 <script src="{{asset('assets/js/form-basic-inputs.js')}}"></script>
@@ -42,7 +42,7 @@
 <!-- Include other styles here -->
 @section('content')
 <h4 class="py-0 mb-4">
-  <span class="text-muted fw-light" style="color:red !important;">Roles List(s)</span>
+  <span class="text-muted fw-light" style="color:red !important;">Location List(s)</span>
 </h4>
 
 <div class="row">
@@ -56,52 +56,26 @@
 
       <table class="table table-bordered" style="margin-bottom: 20px;" id="locationTable">
         <thead style="background-color: #aed6f1;">
-          <tr>
-
-            <th>Name</th>
-            <th>Status</th>
-            <th>Created By / Date</th>
-            <th>Updated By / Date</th>
-            <th>Actions</th>
-          </tr>
+        <tr><th>ID</th><th>Name</th><th>State</th><th>Status</th><th>Actions</th></tr>
         </thead>
         <tbody>
-          @foreach ($roles_list as $role)
+        @foreach ($districts as $district)
+    <tr>
+        <td>{{ $district->id }}</td>
+        <td>{{ $district->district_name }}</td>
+        <td>{{ $district->state_id }}</td>
+        <td>{{ $district->status ? 'Active' : 'Inactive' }}</td>
+        <td>
+            <a href="{{ route('districts.edit', $district) }}" ><i class="bx bx-pencil me-1"></i></a>
+          <!--   <form action="{{ route('districts.destroy', $district) }}" method="POST" style="display:inline;">
+                @csrf @method('DELETE')
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form> -->
 
-
-        <tr>
-
-            <td>{{ $role->role_name }}</td>
-
-
-            <td style="color: {{ $role->status === 'Active' ? 'green !important' : 'red !important' }};">
-    {{ $role->status }}
-</td>
-
-
-
-
-
-            <td>
-
-             {{ $role->created_at . " / " . (optional($role->addedByUser)->first_name ?? 'N/A') . ' (' . (optional($role->addedByUser)->emp_id ?? 'N/A') . ')' }}
-
-            </td>
-
-            <td>
-            {{ $role->updated_at . " / " . (optional($role->updatedByUser)->first_name ?? 'N/A') . ' (' . (optional($role->updatedByUser)->emp_id ?? 'N/A') . ')' }}
-
-</td>
-
-            <td><a href="javascript:void(0);" data-id="{{ $role->id }}" class="btn-delete" title="Inactive"><i class="bx bx-trash me-1" style=" color:red;"></i></a>
-            <a href="{{ route('roles.edit', $role->id) }}" title="Edit">
-            <i class="bx bx-pencil me-1"></i>
-        </a>
-          </td>
-
-
-          </tr>
-          @endforeach
+            <a href="#" ><i class="bx bx-trash me-1" style="color: red;"></i></a>
+        </td>
+    </tr>
+    @endforeach
     </tbody>
     </table>
   </div>
@@ -151,7 +125,7 @@ new DataTable('#locationTable', {
 
           $.ajax({
             type: 'DELETE',
-            url: '{{ route("roles.softDelete", "") }}/' + userId,
+            url: '{{ route("branch.softDelete", "") }}/' + userId,
             data: {
               _token: CSRF_TOKEN
             },

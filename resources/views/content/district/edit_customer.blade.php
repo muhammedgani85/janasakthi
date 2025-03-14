@@ -1,14 +1,7 @@
 @extends('layouts/contentNavbarLayout')
 
 @section('title', 'Edit Customer')
-<style>
-  /* My Custom css */
 
-.fieldmandatory {
-  color: red !important;
-}
-</style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 @section('content')
 <h4 class="py-3 mb-4"><span class="text-muted fw-light">Customer Details </span> </h4>
 <form id="customerForm" enctype="multipart/form-data">
@@ -20,24 +13,21 @@
             <div class="card mb-4">
                 <h5 class="card-header">Basic Information</h5>
                 <div class="card-body demo-vertical-spacing demo-only-element">
-                @if ($customer->customer_photo !=NULL)
-                <div align="center"><img src="{{ $customer->customer_photo ? asset('storage/' . $customer->customer_photo) : asset('assets/images/sj_logo.png') }}"  alt="Image" style="width:150px; height:110px; border-radius:50%;"></div>
-                @endif
                     <div class="input-group">
-                        <span class="input-group-text">Subscriber ID</span>
+                        <span class="input-group-text">Customer ID</span>
                         <input type="text" name="customer_id" id="customer_id" class="form-control" value="{{ $customer->customer_id}}" readonly>
-
+                        <input type="hidden" name="location_id" id="location_id" class="form-control" value="{{ $location }}" readonly>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text">Initial</span>
-                        <input type="text" name="initial" id="initial" class="form-control"  value="{{ $customer->initial }}">
+                        <input type="text" name="initial" id="initial" class="form-control" maxlength="2" minlength="1" value="{{ $customer->initial }}">
                     </div>
                     <div class="input-group">
-                        <span class="input-group-text fieldmandatory">First Name</span>
+                        <span class="input-group-text">First Name</span>
                         <input type="text" name="first_name" id="first_name" class="form-control" value="{{ $customer->first_name }}">
                     </div>
                     <div class="input-group">
-                        <span class="input-group-text fieldmandatory">Last Name</span>
+                        <span class="input-group-text">Last Name</span>
                         <input type="text" name="last_name" id="last_name" class="form-control" value="{{ $customer->last_name }}">
                     </div>
                     <div class="input-group">
@@ -51,7 +41,7 @@
                     <div class="input-group">
                         <label class="input-group-text" for="inputGroupSelect01">Gender</label>
                         <select class="form-select" id="gender" name="gender">
-                            <option selected value="0">Choose...</option>
+                            <option selected>Choose...</option>
                             <option value="Male" {{ $customer->gender == 'Male' ? 'selected' : '' }}>Male</option>
                             <option value="FeMale" {{ $customer->gender == 'FeMale' ? 'selected' : '' }}>FeMale</option>
                             <option value="Others" {{ $customer->gender == 'Others' ? 'selected' : '' }}>Others</option>
@@ -64,7 +54,7 @@
                     <div class="input-group">
                         <label class="input-group-text" for="inputGroupSelect01">Marital Status</label>
                         <select class="form-select" id="marital_status" name="marital_status">
-                            <option selected value="0">Choose...</option>
+                            <option selected>Choose...</option>
                             <option value="UnMarried" {{ $customer->marital_status == 'UnMarried' ? 'selected' : '' }}>UnMarried</option>
                             <option value="Married" {{ $customer->marital_status == 'Married' ? 'selected' : '' }}>Married</option>
                             <option value="Single" {{ $customer->marital_status == 'Single' ? 'selected' : '' }}>Single</option>
@@ -92,65 +82,22 @@
                         <span class="input-group-text">Email</span>
                         <input type="text" name="email_id" id="email_id" class="form-control" value="{{ $customer->email_id }}">
                     </div>
-
                     <div class="input-group">
-            <span class="input-group-text">State</span>
-            <select class="form-select" id="state_id" name="state_id">
-              <option selected value="0">Choose...</option>
-              @foreach($states as $state)
-              <option value="{{  $state->id }}" {{ $customer->state_id == $state->id ? 'selected' : '' }}>{{ $state->name. "-".$state->name_tamil  }}</option>
-
-              @endforeach
-            </select>
-
-          </div>
-          <div class="input-group">
-            <span class="input-group-text fieldmandatory">District</span>
-            <select class="form-select" id="district_id" name="district_id">
-              <option selected value="0">Choose...</option>
-              @foreach($district as $dis)
-              <option value="{{  $dis->id }}" {{ $customer->district_id == $dis->id ? 'selected' : '' }}>{{ $dis->district_name. "-".$dis->district_name_tamil  }}</option>
-
-              @endforeach
-            </select>
-
-          </div>
-
-
-             <div class="input-group">
-            <span class="input-group-text">City</span>
-            <select class="form-select" id="city" name="city">
-              <option selected value="0">Choose...</option>
-              @foreach($city as $cty)
-              <option value="{{  $cty->id }}" {{ $customer->city == $cty->id ? 'selected' : '' }}>{{ $cty->name. "-".$cty->name_tamil  }}</option>
-
-              @endforeach
-            </select>
-
-          </div>
-
-          <div class="input-group">
-            <span class="input-group-text fieldmandatory">Pincode</span>
-
-
-            <input type="hidden" id="pincode" name="pincode" value="{{ $customer->customerpincode ? $customer->customerpincode->id : '' }}">
-            <input type="textbox" id="pincode_id" name="pincode_id" class="form-control" readonly
-    value="{{ $customer->customerpincode ? $customer->customerpincode->pin_code . ' - ' . $customer->customerpincode->name : '' }}">
-
-    <a href="#" id="getpincode" data-bs-toggle="modal" data-bs-target="#pincodeModal">&nbsp;  Click</a>
-
-
-          </div>
-
-          <!-- Add a loading spinner -->
-<div id="loading-spinner" style="display: none;color:red;">
-    Loading data, please wait...
-</div>
+                        <span class="input-group-text">City</span>
+                        <input type="text" name="city" id="city" class="form-control" value="{{ $customer->city }}">
+                    </div>
                     <div class="input-group input-group-merge">
-                        <span class="input-group-text fieldmandatory">Permanent Address</span>
+                        <span class="input-group-text">Permanent Address</span>
                         <textarea class="form-control" name="permanent_address" id="permanent_address">{{ $customer->permanent_address }}</textarea>
                     </div>
-
+                    <div class="input-group input-group-merge">
+                        <span class="input-group-text">Communication Address</span>
+                        <textarea class="form-control" name="communication_address" id="communication_address">{{ $customer->communication_address }}</textarea>
+                    </div>
+                    <div class="input-group input-group-merge">
+                        <span class="input-group-text">Ward</span>
+                        <textarea class="form-control" name="ward" id="ward">{{ $customer->ward }}</textarea>
+                    </div>
                 </div>
             </div>
         </div>
@@ -162,9 +109,16 @@
                 <div class="card-body demo-vertical-spacing demo-only-element">
                     <div class="input-group">
                         <span class="input-group-text">Aadhar Number</span>
-                        <input type="text" name="aadhar_number" id="aadhar_number" class="form-control" onkeypress="return isNumber(event)" maxlength="12" minlength="12" value="{{ $customer->aadhar_number }}">
+                        <input type="text" name="aadhar_number" id="aadhar_number" class="form-control" onkeypress="return isNumber(event)" maxlength="16" minlength="16" value="{{ $customer->aadhar_number }}">
                     </div>
-
+                    <div class="input-group">
+                        <span class="input-group-text">Driving Lic Number</span>
+                        <input type="text" name="driving_license_number" id="driving_license_number" class="form-control" value="{{ $customer->driving_license_number }}">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text">PAN</span>
+                        <input type="text" name="pan" id="pan" class="form-control" value="{{ $customer->pan }}">
+                    </div>
                 </div>
             </div>
         </div>
@@ -172,13 +126,13 @@
         <!-- Occupation -->
         <div class="col-md-6">
             <div class="card mb-4">
-                <h5 class="card-header">Occupation</h5>
+                <h5 class="card-header">Ocupation</h5>
                 <div class="card-body demo-vertical-spacing demo-only-element">
 
                     <div class="input-group">
                         <label class="input-group-text" for="inputGroupSelect01">Occupation</label>
                         <select class="form-select" id="occupation_id" name="occupation_id">
-                            <option selected value="0">Choose...</option>
+                            <option selected>Choose...</option>
                             @foreach($occupations as $occupation)
                             <option value="{{  $occupation->id }}" {{ $customer->occupation_id  == $occupation->id  ? 'selected' : '' }}>{{ $occupation->occupation }}</option>
 
@@ -189,7 +143,7 @@
                     <div class="input-group">
                         <label class="input-group-text" for="inputGroupSelect01">Type</label>
                         <select class="form-select" id="occupation_type" name="occupation_type">
-                            <option selected value="0">Choose...</option>
+                            <option selected>Choose...</option>
                             <option value="Salaried" {{ $customer->occupation_type == 'Salaried' ? 'selected' : '' }}>Salaried</option>
                             <option value="Business" {{ $customer->occupation_type == 'Business' ? 'selected' : '' }}>Business</option>
 
@@ -208,37 +162,45 @@
         </div>
         <div class="col-md-6">
             <div class="card mb-4">
-                <h5 class="card-header">District Incharge</h5>
+                <h5 class="card-header">References</h5>
 
                 <div class="card-body demo-vertical-spacing demo-only-element">
 
-                <div class="input-group">
-          <label class="input-group-text fieldmandatory" for="inputGroupSelect01">Ref 1</label>
+                    <div class="input-group">
+                        <span class="input-group-text">R.Name1:</span>
+                        <input type="text" aria-label="First name" name="r_name" id="r_name" class="form-control" value="{{ $customer->r_name}}">
 
-          <select class="form-select" id="r_name" name="r_name">
-              <option selected>Choose...</option>
-              @foreach ($ref_customers as $refc )
-              <option value="{{ $refc->id }} " {{ $customer->r_name == $refc->id ? 'selected' : '' }}>{{ $refc->first_name." - ".$refc->last_name  }} </option>
-
-              @endforeach
-
-            </select>
-
-          </div>
+                    </div>
                     <div class="input-group">
                         <span class="input-group-text">Phone No:</span>
-                        <input type="text" aria-label="First name" name="r_phone" id="r_phone" class="form-control" value="{{ $customer->r_phone}}" onkeypress="return isNumber(event)" maxlength="13" minlength="10" >
+                        <input type="text" aria-label="First name" name="r_phone" id="r_phone" class="form-control" value="{{ $customer->r_phone}}" onkeypress="return isNumber(event)" maxlength="13" minlength="10">
 
                     </div>
                     <div class="input-group input-group-merge">
                         <span class="input-group-text">Address</span>
-                        <textarea class="form-control" aria-label="With textarea" name="r_address" id="r_address" value="{{ $customer->r_address}}" ></textarea>
+                        <textarea class="form-control" aria-label="With textarea" name="r_address" id="r_address" value="{{ $customer->r_address}}"></textarea>
                     </div>
 
 
+                    <div class="input-group">
+                        <span class="input-group-text">R.Name2:</span>
+                        <input type="text" aria-label="First name" name="r_name1" id="r_name1" class="form-control" value="{{ $customer->r_name1}}">
 
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text">Phone No:</span>
+                        <input type="text" aria-label="First name" name="r_phone1" id="r_phone1" class="form-control" value="{{ $customer->r_phone1}}" onkeypress="return isNumber(event)" maxlength="13" minlength="10">
 
+                    </div>
+                    <div class="input-group input-group-merge">
+                        <span class="input-group-text">Address</span>
+                        <textarea class="form-control" aria-label="With textarea" name="r2_address" id="r2_address" value="{{ $customer->r2_address}}"></textarea>
+                    </div>
 
+                    <div class="input-group input-group-merge">
+                        <span class="input-group-text">Others</span>
+                        <textarea class="form-control" aria-label="With textarea" name="r_others" id="r_others" value="{{ $customer->r_others}}"></textarea>
+                    </div>
 
                 </div>
 
@@ -246,23 +208,9 @@
         </div>
         <!-- Documents -->
         <div class="col-md-6">
-            <div class="card mb-4" style="display: none;">
+            <div class="card mb-4">
                 <h5 class="card-header">Documents</h5>
                 <div class="card-body demo-vertical-spacing demo-only-element">
-                @if ($customer->customer_photo !=NULL)
-                <img src="{{ $customer->customer_photo ? asset('storage/' . $customer->customer_photo) : asset('assets/images/sj_logo.png') }}"  alt="Image" style="width:50px; height:50px; border-radius:50%;">
-                @endif
-
-                @if ($customer->customer_other !=NULL)
-                <img src="{{ $customer->customer_other ? asset('storage/' . $customer->customer_other) : asset('assets/images/sj_logo.png') }}"  alt="Image" style="width:50px; height:50px; border-radius:50%;">
-                @endif
-
-                @if ($customer->customer_aadharr !=NULL)
-                <img src="{{ $customer->customer_aadharr ? asset('storage/' . $customer->customer_aadharr) : asset('assets/images/sj_logo.png') }}"  alt="Image" style="width:50px; height:50px; border-radius:50%;">
-                @endif
-
-
-
                     <div class="input-group">
                         <input type="file" name="customer_photo" id="customer_photo" class="form-control">
                         <label class="input-group-text" for="customer_photo">Customer Photo</label>
@@ -275,39 +223,42 @@
                         <input type="file" name="customer_other" id="customer_other" class="form-control">
                         <label class="input-group-text" for="customer_other">Other Documents</label>
                     </div>
-
-
-
-
                 </div>
             </div>
             <div class="card mb-4">
-                <h5 class="card-header">Sandha Details</h5>
+                <h5 class="card-header">Bank Details</h5>
                 <div class="card-body demo-vertical-spacing demo-only-element">
 
-                <div class="input-group">
-            <span class="input-group-text fieldmandatory">Plan</span>
-            <select class="form-select" id="sandha_plan" name="sandha_plan">
-            <option selected>Choose Plan</option>
-            @foreach ($sandha_details as $sandha)
-            <option value="{{ $sandha->id }}" {{ $customer->sandha_plan == $sandha->id ? 'selected' : '' }}>{{ $sandha->sandha_name. " - Duration : ".$sandha->duration." - Price : RS-".$sandha->price }}</option>
-            @endforeach
+                    <div class="input-group">
+                        <span class="input-group-text">Account Holder Name</span>
+                        <input type="text" aria-label="First name" name="account_holder_name" id="account_holder_name" value="{{ $customer->account_holder_name}}" class="form-control">
 
-            </select>
+                    </div>
 
-          </div>
+                    <div class="input-group">
+                        <span class="input-group-text">Bank Name</span>
+                        <input type="text" aria-label="First name" name="bank_name" id="bank_name" value="{{ $customer->bank_name}}" class="form-control">
 
-          <div class="input-group">
-            <span class="input-group-text fieldmandatory">Customer Joining Date:</span>
-            <input type="date" aria-label="First name" name="join_date" id="join_date" class="form-control" value="{{ $customer->join_date }}">
-            <input type="hidden" aria-label="First name" name="updated_by" id="updated_by" class="form-control" value="{{ session('user_data')->id; }}">
-          </div>
+                    </div>
 
-          <div class="input-group">
-            <span class="input-group-text">Receipt Number:</span>
-            <input type="text" aria-label="First name" name="receipt_number" id="receipt_number" class="form-control" value="{{ $customer->receipt_number }}">
+                    <div class="input-group">
+                        <span class="input-group-text">Account Number</span>
+                        <input type="text" aria-label="First name" name="account_number" id="account_number" value="{{ $customer->account_number}}" class="form-control">
 
-          </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text">IFSC</span>
+                        <input type="text" aria-label="First name" name="ifsc" id="ifsc" value="{{ $customer->ifsc}}" class="form-control">
+
+                    </div>
+
+
+
+                    <div class="input-group">
+                        <span class="input-group-text">Gpay or PhonePe</span>
+                        <input type="text" aria-label="First name" name="gpay_no" id="gpay_no" value="{{ $customer->gpay_no}}" class="form-control">
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -328,80 +279,7 @@
     </div>
 </form>
 
-<!-- select pincode modal -->
-
-<!-- Modal -->
-<div class="modal fade" id="pincodeModal" tabindex="-1" aria-labelledby="pincodeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="pincodeModalLabel">Search Pincode</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- Search Input -->
-        <div class="input-group mb-3">
-          <input type="text" id="searchPincode" class="form-control" placeholder="Enter Pincode" >
-          <span class="input-group-text"><i class="bi bi-search" onclick="fetchPincode()">Search</i></span>
-        </div>
-
-        <!-- Table to Display Pincode Data -->
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-
-              <th>Name</th>
-              <th>Name Tamil</th>
-              <th>Pincode</th>
-              <th>Select</th>
-            </tr>
-          </thead>
-          <tbody id="pincodeTableBody">
-            <tr>
-              <td colspan="5" class="text-center">No Data Found</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-  $(document).ready(function () {
-    // Event listener for dropdown click
-
-
-
-
-    $('#r_name').change(function () {
-                var customerId = $(this).val();
-                if (customerId) {
-                    $.ajax({
-                        url: '/get-customer-details', // Laravel route
-                        type: 'GET',
-                        data: { id: customerId },
-                        cache: false, // Prevent browser caching
-                        success: function (response) {
-                            $('#r_phone').val(response.r_phone);
-                            $('#r_address').val(response.r_address);
-                        },
-                        error: function () {
-                            alert('Failed to fetch customer details.');
-                        }
-                    });
-                } else {
-                    $('#phone_number').val('');
-                    $('#address').val('');
-                }
-            });
-
-});
-
-</script>
-
 <script>
     $('#submitForm').click(function(e) {
         e.preventDefault();
@@ -444,52 +322,7 @@
         }
         return true;
     }
-
-
-    // Fetch Pincode Modal
-
-function fetchPincode() {
-    var pincode = document.getElementById("searchPincode").value;
-    if (pincode.length < 3) return; // Minimum 3 characters before searching
-
-    fetch('/get-pincode?pincode=' + pincode)
-    .then(response => response.json())
-    .then(data => {
-        let tableBody = document.getElementById("pincodeTableBody");
-        tableBody.innerHTML = "";
-
-        if (data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="5" class="text-center">No Data Found</td></tr>`;
-            return;
-        }
-
-        data.forEach(row => {
-            let tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td>${row.name}</td>
-                <td>${row.name_tamil}</td>
-                <td>${row.pin_code}</td>
-                <td><button class="btn btn-success btn-sm" onclick="selectPincode('${row.id}', '${row.pin_code}', '${row.name}')"><i class="bi bi-check-circle"></i></button></td>
-            `;
-            tableBody.appendChild(tr);
-        });
-    })
-    .catch(error => console.error("Error fetching pincode:", error));
-}
-
-function selectPincode(id, pincode,name) {
-    document.getElementById("pincode_id").value = pincode+" - "+name;
-    document.getElementById("pincode").value = id;
-
-    // Close the modal
-    var modal = bootstrap.Modal.getInstance(document.getElementById('pincodeModal'));
-    modal.hide();
-}
-
-
-
 </script>
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
 @endsection

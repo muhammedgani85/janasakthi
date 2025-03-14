@@ -35,12 +35,30 @@ class PinCodeController extends Controller
       $request->validate([
         'name' => 'required|string|max:255',
         'pin_code' => 'required|integer',
-
-
     ]);
 
+    // Check if the record already exists
+    $exists = Pincode::where('pin_code', $request->pin_code)
+                     ->where('name', $request->name)
+                     ->exists();
+   // dd($exists);
+    if ($exists) {
+      return response()->json([
+        'success' => false,
+        'message' => 'This Pincode with the given name already exists.'
+    ], 201); // HTTP 422 for validation errors
+    }else{
+
+
     Pincode::create($request->all());
-    return redirect()->route('pincodes.index')->with('success', 'Pincode created successfully.');
+
+    return response()->json([
+      'success' => true,
+      'message' => 'Pincode created successfully.',
+
+  ], 201);
+    }
+
     }
 
     /**
@@ -95,6 +113,18 @@ class PinCodeController extends Controller
         } else {
             return response()->json(['success' => false, 'message' => 'Pincode not found.'], 404);
         }
+    }
+
+
+    public function get_pincode(Request $request){
+
+        $pincode = $request->query('pincode');
+
+        // Fetch matching records from the database
+        $data = Pincode::where('pin_code', 'LIKE', "%$pincode%")->get();
+
+        return response()->json($data);
+
     }
 
 

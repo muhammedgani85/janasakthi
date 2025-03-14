@@ -56,6 +56,8 @@ return new class extends Migration
             $table->integer('district_id')->nullable();
             $table->integer('city_id')->nullable();
             $table->integer('pincode')->nullable();
+            $table->integer('added_by')->nullable();
+            $table->integer('updated_by')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

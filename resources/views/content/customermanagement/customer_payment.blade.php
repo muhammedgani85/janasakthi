@@ -42,7 +42,7 @@
 <!-- Include other styles here -->
 @section('content')
 <h4 class="py-0 mb-4">
-  <span class="text-muted fw-light" style="color:red !important;">Customer(s)</span>
+  <span class="text-muted fw-light" style="color:red !important;">Sandha Reminders(s)</span>
 </h4>
 
 <div class="row">

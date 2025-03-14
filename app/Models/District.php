@@ -10,4 +10,8 @@ class District extends Model
 {
     use HasFactory,SoftDeletes;
     protected $table ='districts';
+    public function customers()
+    {
+        return $this->hasMany(Customer::class, 'district_id');
+    }
 }

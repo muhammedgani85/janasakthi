@@ -1,10 +1,10 @@
 @extends('layouts/contentNavbarLayout')
 
-@section('title', 'New Role')
+@section('title', 'New Sandha')
 
 @section('content')
 
-<h4 class="py-3 mb-4"><span class="text-muted fw-light">Role Details </span> </h4>
+<h4 class="py-3 mb-4"><span class="text-muted fw-light">Location Details </span> </h4>
 <form id="customerForm" enctype="multipart/form-data">
   @csrf
   <div class="row">
@@ -18,29 +18,43 @@
 
 
           <div class="input-group">
-            <span class="input-group-text">Role Name</span>
-            <input type="text" aria-label="sandha_name name" name="role_name" id="role_name" class="form-control">
-
-            <input type="hidden" aria-label="First name" name="added_by" id="added_by" class="form-control" value="{{ session('user_data')->id; }}">
+            <span class="input-group-text">Location Name</span>
+            <input type="text" aria-label="sandha_name name" name="branch_name" id="branch_name" class="form-control">
 
           </div>
 
 
           <div class="input-group">
-            <span class="input-group-text">Status</span>
-            <select class="form-select" id="status" name="status">
-            <option selected="">Choose...</option>
-            <option value="Active" selected="">Active</option>
-            <option value="InActive">InActive</option>
-
-            </select>
+            <span class="input-group-text">ShortCode</span>
+            <input type="text" aria-label="First name" name="branch_prefix" id="branch_prefix" class="form-control">
 
 
           </div>
 
 
+          <div class="input-group">
+            <span class="input-group-text">Address</span>
+            <input type="text" aria-label="First name" name="address" id="address" class="form-control">
 
+          </div>
 
+         <!--  -->
+          <div class="input-group">
+            <span class="input-group-text">Contact Number</span>
+            <input type="text" aria-label="First name" name="mobile_number" id="mobile_number" class="form-control">
+
+          </div>
+
+          <div class="input-group">
+            <span class="input-group-text">Address</span>
+            <input type="text" aria-label="First name" name="address" id="address" class="form-control">
+
+          </div>
+          <div class="input-group">
+            <span class="input-group-text">Org Name</span>
+            <input type="text" aria-label="First name" name="org_name" id="org_name" class="form-control">
+
+          </div>
 
 
 
@@ -102,7 +116,7 @@
     let formData = new FormData($('#customerForm')[0]);
 
     $.ajax({
-      url: "{{ route('roles.store') }}",
+      url: "{{ route('branch.store') }}",
       method: 'POST',
       data: formData,
       contentType: false,
@@ -111,7 +125,7 @@
         // alert(response.success);
         swal("Done!", response.success, "success");
         //location.reload();
-        window.location.href = "{{ url('/roles')}}";
+        window.location.href = "{{ url('/branch')}}";
       },
       error: function(response) {
 

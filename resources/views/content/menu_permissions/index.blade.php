@@ -1,6 +1,6 @@
 @extends('layouts/contentNavbarLayout')
 
-@section('title', 'Leave Management')
+@section('title', 'Permission Management')
 
 @section('page-script')
 <script src="{{asset('assets/js/form-basic-inputs.js')}}"></script>
@@ -21,7 +21,7 @@
 <!-- Include other styles here -->
 @section('content')
 <h4 class="py-0 mb-4">
-  <span class="text-muted fw-light" style="color:red !important;">Attendace Dashboard</span>
+  <span class="text-muted fw-light" style="color:red !important;">Permissions</span>
 </h4>
 
 <div class="row">
@@ -42,7 +42,7 @@
 
   <!-- Form controls -->
   <div class="card">
-    <h5 class="card-header" style="color:red;">Attendace List(s)</h5>
+
     <div class="table-responsive text-nowrap">
     <form method="GET" action="{{ url('/mpermission') }}">
         <div class="form-group">

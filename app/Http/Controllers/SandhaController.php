@@ -6,7 +6,7 @@ use App\Models\Customer;
 use Illuminate\Http\Request;
 use App\Models\Sandha;
 use Exception;
-
+use Carbon\Carbon;
 use DB;
 
 class SandhaController extends Controller
@@ -95,44 +95,69 @@ class SandhaController extends Controller
         $unpaidCustomers = []; // Default empty array
 
         try {
-            // Enable query logging for debugging
-            DB::enableQueryLog();
 
-            // Raw SQL query as a string
-            $query = "
-                SELECT customers.*, sandhas.sandha_name, sandhas.duration
-                FROM `customers`
-                LEFT JOIN `sandhas` ON `sandhas`.`id` = `customers`.`sandha_plan`
-                WHERE `customers`.`status` = 'active'
-                AND EXISTS (
-                    SELECT *
-                    FROM `sandhas`
-                    WHERE `sandhas`.`id` = `customers`.`sandha_plan`
-                        AND DATE_ADD(customers.join_date, INTERVAL sandhas.duration MONTH) <= CURDATE()
-                )
-                AND NOT EXISTS (
-                    SELECT *
-                    FROM `sandha_payments`
-                    JOIN `sandhas` ON `sandhas`.`id` = `customers`.`sandha_plan`
-                    WHERE `sandha_payments`.`customer_id` = `customers`.`id`
-                        AND sandha_payments.payment_date >= DATE_ADD(customers.join_date, INTERVAL (FLOOR((TIMESTAMPDIFF(MONTH, customers.join_date, CURDATE()) / sandhas.duration)) * sandhas.duration) MONTH)
-                        AND sandha_payments.payment_date < DATE_ADD(customers.join_date, INTERVAL ((FLOOR((TIMESTAMPDIFF(MONTH, customers.join_date, CURDATE()) / sandhas.duration)) + 1) * sandhas.duration) MONTH)
-                )
-                ORDER BY `sandha_plan` ASC
-            ";
 
-            // Execute the raw query
-            $unpaidCustomers = DB::select($query);
+         // Fetch all active customers with their subscription and payment details
+    $customers = Customer::with(['subscriptionPlan', 'subscriptionPayments'])
+    ->where('status', 'active') // Only consider active customers
+    ->get();
 
-            // Log the executed queries for debugging
-            \Log::info(DB::getQueryLog());
+$unpaidCustomers = [];
+
+// Loop through all customers and check if they have pending dues
+foreach ($customers as $customer) {
+$subscriptionPlan = $customer->subscriptionPlan;
+if (!$subscriptionPlan) continue; // Skip customers without a subscription plan
+
+$joinDate = Carbon::parse($customer->join_date);
+$nextDueDate = $joinDate->copy();
+$payments = $customer->subscriptionPayments;
+
+// Array to hold pending dues for this specific customer
+$pendingDues = [];
+
+// Calculate due dates and check if any payment is missing
+for ($i = 1; $i <= 12; $i++) { // Example: Check for the next 12 months
+$nextDueDate->addMonths($subscriptionPlan->duration);
+
+// Check if payment was made for this period
+$payment = $payments->firstWhere(function ($payment) use ($nextDueDate) {
+return Carbon::parse($payment->payment_date)->between(
+$nextDueDate->copy()->subMonths($subscriptionPlan->duration),
+$nextDueDate
+);
+});
+
+if (!$payment) {
+// Add this unpaid due to the list
+$pendingDues[] = [
+'due_date' => $nextDueDate->format('Y-m-d'),
+'amount_due' => $subscriptionPlan->price,
+];
+}
+}
+
+// If there are any pending dues for this customer, add them to the list
+if (!empty($pendingDues)) {
+$unpaidCustomers[] = [
+'customer' => $customer,
+'pending_dues' => $pendingDues,
+];
+}
+}
+
+dd($unpaidCustomers);
+
+
+
         } catch (\Exception $e) {
             // Log the error for debugging
             \Log::error('Error fetching unpaid customers: ' . $e->getMessage());
         }
 
         // Pass the data to the view
-        return view('content.customermanagement.customer_payment', compact('unpaidCustomers'));
+
+       // return view('content.customermanagement.customer_payment', compact('unpaidCustomers'));
     }
 
 

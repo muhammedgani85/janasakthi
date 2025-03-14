@@ -72,6 +72,8 @@ use App\Http\Controllers\MenuPermissionController;
 use App\Http\Controllers\PinCodeController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\SandhaController;
+use App\Http\Controllers\DistrictController;
+
 use App\Models\Sandha;
 
 // Main Page Route
@@ -380,8 +382,19 @@ Route::get('roles', [RolesController::class, 'index'])->name('roles.index');
 Route::get('roles/create', [RolesController::class, 'create'])->name('roles.create');
 Route::any('roles/store', [RolesController::class, 'store'])->name('roles.store');
 Route::delete('/roles/softDelete/{id}', [RolesController::class, 'softDelete'])->name('roles.softDelete');
+Route::get('/roles/{roles}/edit', [RolesController::class, 'edit'])->name('roles.edit');
+
 
 
 Route::get('/permission-restricted', function () {
   return view('content.permission.index'); // Create this view as needed
 })->name('permission.restricted');
+
+
+// Get Pincode
+
+Route::get('get-pincode', [PinCodeController::class, 'get_pincode'])->name('get-pincode');
+
+
+// District Route
+Route::resource('districts', DistrictController::class);

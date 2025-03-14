@@ -42,7 +42,7 @@
 <!-- Include other styles here -->
 @section('content')
 <h4 class="py-0 mb-4">
-  <span class="text-muted fw-light" style="color:red !important;">Customer(s)</span>
+  <span class="text-muted fw-light" style="color:red !important;">Subscriber(s)</span>
 </h4>
 
 <div class="row">
@@ -52,7 +52,7 @@
         <div class="card-body">
           <div class="d-flex align-items-start justify-content-between">
             <div class="content-left">
-              <span>Customers (Total)</span>
+              <span>Subscriber (Total)</span>
               <div class="d-flex align-items-end mt-2">
                 <h4 class="mb-0 me-2" style="color:#000;font-weight:bold;">{{ $total =  $customers->count();  }}</h4>
                 <!-- <small class="text-success">(+29%)</small> -->
@@ -144,51 +144,62 @@
           <tr>
             <th
             style='width:10% !important;'>S.No</th>
-            <th>Photo</th>
+          <!--   <th>Photo</th> -->
             <th>Cust.ID</th>
             <th>Name</th>
-            <th>Phone Number</th>
+
             <th>City</th>
-            <!-- <th>Aadhar Number</th> -->
-           <!--  <th>Location</th> -->
+            <th>Pincode</th>
+            <th>Address</th>
+            <th>Phone Number</th>
+            <th>Incharge</th>
             <th>C.Date</th>
             <th>Status</th>
+            @if($is_check)
             <th>Actions</th>
+            @endif
           </tr>
         </thead>
         <tbody>
 
           @foreach ($customers as $user)
           <tr>
-            <td  style='width:10% !important;'>{{ $loop->iteration }}</td>
+            <td>{{ $loop->iteration }}</td>
 
-            <td>
+           <!--  <td>
             <img
     src="{{ $user->customer_photo ? asset('storage/' . $user->customer_photo) : asset('assets/images/sj_logo.png') }}"
     alt="Image"
-    style="width:50px; height:50px; border-radius:50%;"
->
-          </td>
+    style="width:50px; height:50px; border-radius:50%;">
+          </td> -->
             <td class="text-left">{{ $user->customer_id  }}</td>
             <td class="text-left">{{ $user->initial }} {{ $user->first_name }} {{ $user->last_name }} </td>
 
+
+
+            <td class="text-left">{{ collect($user->city)->get('name', 'N/A') }}</td>
+            <td class="text-left">{{ isset($user->customerpincode->pin_code)?$user->customerpincode->pin_code:"N/A" }}</td>
+            <td class="text-left">{{ isset($user->permanent_address)?$user->permanent_address:"N/A" }}</td>
             <td class="text-left">{{ $user->phone_number }}</td>
-            <td class="text-left">{{ $user->city }}</td>
+            <td class="text-left">{{ isset($user->incharge->first_name)?$user->incharge->first_name:"N/A" }}</td>
+
 
             <td class="text-left">{{ date('d-m-Y',strtotime($user->created_at)) }}</td>
             <td class="text-left {{ $user->status === 'Active' ? 'text-success' : ($user->status === 'Inactive' ? 'text-warning' : 'text-danger') }}">
               {{ $user->status }}
             </td>
 
+            @if($is_check)
             <td class="text-left">
               <div class="dropdown">
                 <a href="javascript:void(0);" data-id="{{ $user->id }}" class="btn-delete" title="Inactive"><i class="bx bx-trash me-1" style=' color:red;'></i></a>
                 <a href="{{ route('customers.edit', $user->id) }}" title="edit"><i class="bx bx-pencil me-1"></i></a>
-                <a href="javascript:void(0);" title="details"><i class='bx bxs-detail'></i></a>
+                <!-- <a href="javascript:void(0);" title="details"><i class='bx bxs-detail'></i></a> -->
 
               </div>
     </div>
     </td>
+    @endif
     </tr>
     @endforeach
     </tbody>

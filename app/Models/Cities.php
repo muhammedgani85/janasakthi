@@ -9,4 +9,8 @@ class Cities extends Model
 {
     use HasFactory;
     protected $table ='tbl_cities';
+    public function customers()
+    {
+        return $this->hasMany(Customer::class, 'city_id');
+    }
 }

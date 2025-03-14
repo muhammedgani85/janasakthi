@@ -10,5 +10,21 @@ class Roles extends Model
 {
     use HasFactory, SoftDeletes;
     protected $dates = ['deleted_at'];
-    protected $fillable =['role_name', 'status'];
+    protected $fillable =['role_name', 'status','added_by','updated_by'];
+
+
+    public function addedByUser()
+    {
+    return $this->belongsTo(User::class, 'added_by');
+    }
+
+    public function updatedByUser()
+    {
+    return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function role()
+{
+    return $this->hasOne(Roles::class, 'id', 'role_id');
+}
 }

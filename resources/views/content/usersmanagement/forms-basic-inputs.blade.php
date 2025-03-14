@@ -3,6 +3,13 @@
 @section('title', 'New Employee')
 
 @section('content')
+<style>
+  /* My Custom css */
+
+.fieldmandatory {
+  color: red !important;
+}
+</style>
 <h4 class="py-3 mb-4"><span class="text-muted fw-light">Employee Details </span> </h4>
 <form id="employeeForm" enctype="multipart/form-data">
   @csrf
@@ -16,17 +23,17 @@
 
           <div class="input-group">
             <span class="input-group-text">Initial</span>
-            <input type="text" aria-label="First name" name="initial" id="initial" class="form-control" maxlength="2" minlength="1">
+            <input type="text" aria-label="First name" name="initial" id="initial" class="form-control" >
 
           </div>
           <div class="input-group">
-            <span class="input-group-text">First Name</span>
+            <span class="input-group-text fieldmandatory">First Name</span>
             <input type="text" aria-label="First name" name="first_name" id="first_name" class="form-control">
 
           </div>
 
           <div class="input-group">
-            <span class="input-group-text">Last Name</span>
+            <span class="input-group-text fieldmandatory">Last Name</span>
             <input type="text" aria-label="First name" name="last_name" id="last_name" class="form-control">
 
           </div>
@@ -52,19 +59,19 @@
     <!-- Merged -->
     <div class="col-md-6">
       <div class="card mb-4">
-        <h5 class="card-header">Contact Details</h5>
+        <h5 class="card-header">Contact / Identification Details</h5>
         <div class="card-body demo-vertical-spacing demo-only-element">
 
 
 
           <div class="input-group">
-            <span class="input-group-text">Phone Number</span>
+            <span class="input-group-text fieldmandatory">Phone Number</span>
             <input type="text" aria-label="First name" name="phone_number" id="phone_number" class="form-control" onkeypress="return isNumber(event)" maxlength="13" minlength="10">
 
           </div>
 
           <div class="input-group">
-            <span class="input-group-text">Emr. Number</span>
+            <span class="input-group-text fieldmandatory">Emr. Number</span>
             <input type="text" aria-label="First name" name="emergency_number" id="emergency_number" class="form-control" onkeypress="return isNumber(event)" maxlength="13" minlength="10">
 
           </div>
@@ -76,8 +83,14 @@
 
 
           <div class="input-group input-group-merge">
-            <span class="input-group-text">Address</span>
+            <span class="input-group-text fieldmandatory">Address</span>
             <textarea class="form-control" aria-label="With textarea" name="address" id="address"></textarea>
+          </div>
+
+          <div class="input-group">
+            <span class="input-group-text">Aadhar Number</span>
+            <input type="text" aria-label="First name" name="aadhar_number" id="aadhar_number" class="form-control"  onkeypress="return isNumber(event)" maxlength="12" minlength="12">
+
           </div>
 
         </div>
@@ -85,59 +98,9 @@
     </div>
 
     <!-- Sizing -->
-    <div class="col-md-6">
-      <div class="card mb-4">
-        <h5 class="card-header">Identification</h5>
-        <div class="card-body demo-vertical-spacing demo-only-element">
 
-          <div class="input-group">
-            <span class="input-group-text">Aadhar Number</span>
-            <input type="text" aria-label="First name" name="aadhar_number" id="aadhar_number" class="form-control" onkeypress="return isNumber(event)" onkeypress="return isNumber(event)" maxlength="16" minlength="16">
-
-          </div>
-
-          <div class="input-group">
-            <span class="input-group-text">Driving Lic Number</span>
-            <input type="text" aria-label="First name" name="driving_license_number" id="driving_license_number" class="form-control">
-
-          </div>
-
-          <div class="input-group">
-            <span class="input-group-text">PAN</span>
-            <input type="text" aria-label="First name" name="pan" id="pan" class="form-control">
-
-          </div>
-        </div>
-      </div>
-    </div>
     <!-- Checkbox and radio addons -->
-    <div class="col-md-6">
-      <div class="card mb-4">
-        <h5 class="card-header">Salary</h5>
-        <div class="card-body demo-vertical-spacing demo-only-element">
 
-          <div class="input-group">
-            <span class="input-group-text">Basic &#8377;</span>
-            <input type="number" class="form-control" placeholder="Amount" name="salary" id="salary" aria-label="Amount (to the nearest dollar)" onkeypress="return isNumber(event)" />
-            <span class="input-group-text">.00</span>
-          </div>
-
-          <div class="input-group">
-            <span class="input-group-text">Deduction&#8377;</span>
-            <input type="number" class="form-control" placeholder="Deduction" name="deduction" id="deduction" aria-label="Amount (to the nearest dollar)" onkeypress="return isNumber(event)" value="0"/>
-            <span class="input-group-text">.00</span>
-          </div>
-
-          <div class="input-group">
-            <span class="input-group-text">Others&#8377;</span>
-            <input type="number" class="form-control" placeholder="Others" name="others" id="others" aria-label="Amount (to the nearest dollar)" onkeypress="return isNumber(event)" value="0" />
-            <span class="input-group-text">.00</span>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
   </div>
 
 
@@ -149,7 +112,7 @@
 
         <div class="card-body demo-vertical-spacing demo-only-element">
           <div class="input-group">
-            <label class="input-group-text" for="inputGroupSelect01">Roles</label>
+            <label class="input-group-text fieldmandatory" for="inputGroupSelect01 fieldmandatory">Roles</label>
             <select class="form-select" id="role" name="role">
               <option selected>Choose...</option>
               @foreach($roles as $role)
@@ -159,7 +122,7 @@
             </select>
           </div>
           <div class="input-group">
-            <label class="input-group-text" for="inputGroupSelect01">Status</label>
+            <label class="input-group-text fieldmandatory" for="inputGroupSelect01">Status</label>
             <select class="form-select" id="status" name="status">
               <option selected>Choose...</option>
               <option value="Active">Active</option>
@@ -170,7 +133,7 @@
             </select>
           </div>
           <div class="input-group">
-            <label class="input-group-text" for="inputGroupSelect01">Location</label>
+            <label class="input-group-text fieldmandatory" for="inputGroupSelect01">Location</label>
             <select class="form-select" id="location" name="location">
               <option selected>Choose...</option>
               @foreach($branchs as $branch)
@@ -181,18 +144,18 @@
           </div>
 
           <div class="input-group">
-            <label class="input-group-text" for="inputGroupSelect01">Emp Id</label>
+            <label class="input-group-text fieldmandatory" for="inputGroupSelect01">Emp Id</label>
             <input type="text" class="form-control" placeholder="Emp_Id" name="emp_id" id="emp_id" readonly />
           </div>
 
           <div class="input-group">
-            <span class="input-group-text">@</span>
+            <span class="input-group-text fieldmandatory">@</span>
             <input type="text" class="form-control" placeholder="User Name" name="user_name" id="user_name" aria-label="Amount (to the nearest dollar)" />
 
           </div>
 
           <div class="input-group">
-            <span class="input-group-text">@</span>
+            <span class="input-group-text fieldmandatory">@</span>
             <input type="password" class="form-control" placeholder="Password" name="password" id="password" aria-label="Amount (to the nearest dollar)" />
 
           </div>
@@ -244,9 +207,7 @@
       </div>
     </div>
   </div>
-  <div id="user-count">
-    User count: <span id="count">0</span>
-  </div>
+
 </form>
 
 

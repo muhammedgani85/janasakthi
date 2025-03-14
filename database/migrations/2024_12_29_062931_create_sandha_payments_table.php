@@ -11,9 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sandha_payments', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::create('subscription_payments', function (Blueprint $table) {
+          $table->id();
+          $table->integer('customer_id'); // Foreign key to customers table
+          $table->integer('subscription_plan_id'); // Foreign key to subscriptions table
+          $table->decimal('amount_paid', 10, 2); // Amount paid by the customer
+          $table->date('payment_date'); // Payment date
+          $table->string('payment_method')->nullable(); // Optional: Payment method (e.g., Credit Card, Bank Transfer, etc.)
+          $table->string('transaction_id')->nullable(); // Optional: Transaction ID for the payment
+          $table->string('customer_photo')->nullable();
+          $table->integer('added_by')->nullable();
+          $table->timestamps(); // created_at, updated_at
         });
     }
 
@@ -22,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sandha_payments');
+        Schema::dropIfExists('subscription_payments');
     }
 };

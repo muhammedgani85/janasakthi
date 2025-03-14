@@ -21,7 +21,7 @@
       <div class="d-flex align-items-end row">
         <div class="col-sm-7">
           <div class="card-body">
-            <h5 class="card-title text-primary">Congratulations John! 🎉</h5>
+            <h5 class="card-title text-primary">Congratulations {{ session('user_data')->first_name }} {{ session('user_data')->last_name }}! 🎉</h5>
             <p class="mb-4">You have done <span class="fw-medium">72%</span> more sales today. Check your new badge in your profile.</p>
 
             <a href="javascript:;" class="btn btn-sm btn-outline-primary">View Badges</a>

@@ -21,4 +21,10 @@ class Sandha extends Model
 
   // If you are using soft deletes, you can also include:
   protected $dates = ['deleted_at'];
+
+
+  public function payments()
+{
+    return $this->hasMany(SubscriptionPayment::class, 'subscription_plan_id');
+}
 }

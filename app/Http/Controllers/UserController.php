@@ -23,7 +23,12 @@ class UserController extends Controller
     {
       $userRole =$userData = session('user_data')->role;
       if ($userRole == 9 || $userRole == 10) {
-        $users = User::orderBy('id', 'DESC')->get();
+        $users = User::with(['role'])
+                ->where('users.status','Active')
+                ->orderByRaw("CASE WHEN users.status = 'Active' THEN 0 ELSE 1 END")
+                ->orderBy('users.id', 'DESC')->get();
+
+              //  dd($users->toArray()); // Debugging
         return view('content.usersmanagement.index', compact('users'));
       } else{
         return redirect()->route('permission.restricted'); // Replace with the appropriate route
@@ -57,18 +62,18 @@ class UserController extends Controller
 
 
             $validator = Validator::make($request->all(), [
-                'initial' => 'required',
+                /* 'initial' => 'required', */
                 'first_name' => 'required',
                 'last_name' => 'required',
-                'father_name' => 'required',
+                /* 'father_name' => 'required', */
                 'phone_number' => 'required|numeric',
                 'emergency_number' => 'required|numeric',
-                'city' => 'required',
+              /*   'city' => 'required', */
                 'address' => 'required',
-                'aadhar_number' => 'required|numeric',
+                /* 'aadhar_number' => 'required|numeric', */
                 /*  'driving_license_number' => 'required', */
                 /* 'pan' => 'required', */
-                'salary' => 'required|numeric',
+              /*   'salary' => 'required|numeric', */
                 /* 'deduction' => 'required|numeric', */
                 /*  'others' => 'required|numeric', */
                 'role' => 'required',
@@ -127,18 +132,18 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'initial' => 'required',
+            /* 'initial' => 'required', */
             'first_name' => 'required',
             'last_name' => 'required',
-            'father_name' => 'required',
+          /*   'father_name' => 'required', */
             'phone_number' => 'required|numeric',
             'emergency_number' => 'required|numeric',
-            'city' => 'required',
+           /*  'city' => 'required', */
             'address' => 'required',
-            'aadhar_number' => 'required|numeric',
+           /*  'aadhar_number' => 'required|numeric', */
             /*  'driving_license_number' => 'required', */
-            'pan' => 'required',
-            'salary' => 'required|numeric',
+           /*  'pan' => 'required', */
+            /* 'salary' => 'required|numeric', */
             /* 'deduction' => 'required|numeric', */
             /*  'others' => 'required|numeric', */
             'role' => 'required',

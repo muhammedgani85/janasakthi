@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Branch;
 use App\Models\Cities;
 use App\Models\Customer;
+use App\Models\District;
 use App\Models\Pincode;
 use App\Models\Sandha;
 use App\Models\State;
@@ -32,8 +33,9 @@ class CustomerPrintController extends Controller
 
         $city = Cities::where('status', 'Active')->get();
         $states = State::where('status', 'Active')->get();
-        $pincode = Pincode::where('status', 'Active')->get();
+        $pincode = Pincode::where('status', 'Active')->orderby('pin_code','ASC')->get();
         $sandhas = Sandha::where('status', 'Active')->get();
+        $district = District::where('status','Active')->get();
        // dd($request->all());
 
         // Retrieve all branches for the dropdown
@@ -93,7 +95,7 @@ class CustomerPrintController extends Controller
 //dd($customers);
 
 // Pass data to the view
-return view('content.customermanagement.report.customer_print', compact('customers', 'branches', 'fromDate', 'toDate', 'status', 'location_id','role','city','states','pincode','sandhas','ref_customer'));
+return view('content.customermanagement.report.customer_print', compact('customers', 'branches', 'fromDate', 'toDate', 'status', 'location_id','role','city','states','pincode','sandhas','ref_customer','district'));
 
 
 
@@ -155,11 +157,31 @@ return view('content.customermanagement.report.customer_print', compact('custome
     {
 
         $pincode = $request->pincode;
+        $district_id = $request->district_id;
 
         // Fetch customers with the specific pincode
-        $customers = Customer::where('pincode', $pincode)->orderBy('id')->get();
-        $customersPerPage = $customers->chunk(4); // Group into chunks of 4
+        $customers = Customer::query();
+        $customers = Customer::with(['city', 'district','customerpincode']);
 
-        return view('content.customermanagement.print.index', compact('customersPerPage', 'pincode'));
+        $customers->where('status','Active');
+
+
+        if (!empty($pincode)) {
+        $customers->where('pincode', $pincode);
+        }
+
+        if (!empty($district_id)) {
+        $customers->where('district_id', $district_id);
+        }
+
+        $columns = $request->input('column', 2);
+
+        $customers = $customers->orderBy('id')->get();
+
+
+
+        $customersPerPage = $customers->chunk(18); // Group into chunks of 4
+
+        return view('content.customermanagement.print.index', compact('customersPerPage', 'pincode','columns','customers'));
     }
 }

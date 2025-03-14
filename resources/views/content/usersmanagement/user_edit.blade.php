@@ -3,6 +3,13 @@
 @section('title', 'Edit Employee')
 
 @section('content')
+<style>
+  /* My Custom css */
+
+.fieldmandatory {
+  color: red !important;
+}
+</style>
 <h4 class="py-3 mb-4"><span class="text-muted fw-light">Edit Employee Details</span></h4>
 <form id="employeeForm" enctype="multipart/form-data">
     @csrf
@@ -19,12 +26,12 @@
                     </div>
 
                     <div class="input-group">
-                        <span class="input-group-text">First Name</span>
+                        <span class="input-group-text fieldmandatory">First Name</span>
                         <input type="text" aria-label="First name" name="first_name" id="first_name" class="form-control" value="{{ $employee->first_name }}">
                     </div>
 
                     <div class="input-group">
-                        <span class="input-group-text">Last Name</span>
+                        <span class="input-group-text fieldmandatory">Last Name</span>
                         <input type="text" aria-label="Last name" name="last_name" id="last_name" class="form-control" value="{{ $employee->last_name }}">
                     </div>
 
@@ -39,15 +46,15 @@
         <!-- Contact Details -->
         <div class="col-md-6">
             <div class="card mb-4">
-                <h5 class="card-header">Contact Details</h5>
+                <h5 class="card-header">Contact / Identification Details</h5>
                 <div class="card-body demo-vertical-spacing demo-only-element">
                     <div class="input-group">
-                        <span class="input-group-text">Phone Number</span>
+                        <span class="input-group-text fieldmandatory">Phone Number</span>
                         <input type="text" aria-label="Phone number" name="phone_number" id="phone_number" class="form-control" value="{{ $employee->phone_number }}" onkeypress="return isNumber(event)">
                     </div>
 
                     <div class="input-group">
-                        <span class="input-group-text">Emr. Number</span>
+                        <span class="input-group-text fieldmandatory">Emr. Number</span>
                         <input type="text" aria-label="Emergency number" name="emergency_number" id="emergency_number" class="form-control" value="{{ $employee->emergency_number }}" onkeypress="return isNumber(event)">
                     </div>
 
@@ -57,61 +64,18 @@
                     </div>
 
                     <div class="input-group input-group-merge">
-                        <span class="input-group-text">Address</span>
+                        <span class="input-group-text fieldmandatory">Address</span>
                         <textarea class="form-control" aria-label="With textarea" name="address" id="address">{{ $employee->address }}</textarea>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Identification -->
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <h5 class="card-header">Identification</h5>
-                <div class="card-body demo-vertical-spacing demo-only-element">
                     <div class="input-group">
                         <span class="input-group-text">Aadhar Number</span>
                         <input type="text" aria-label="Aadhar number" name="aadhar_number" id="aadhar_number" class="form-control" value="{{ $employee->aadhar_number }}" onkeypress="return isNumber(event)">
                     </div>
-
-                    <div class="input-group">
-                        <span class="input-group-text">Driving Lic Number</span>
-                        <input type="text" aria-label="Driving license number" name="driving_license_number" id="driving_license_number" class="form-control" value="{{ $employee->driving_license_number }}">
-                    </div>
-
-                    <div class="input-group">
-                        <span class="input-group-text">PAN</span>
-                        <input type="text" aria-label="PAN" name="pan" id="pan" class="form-control" value="{{ $employee->pan }}">
-                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Salary -->
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <h5 class="card-header">Salary</h5>
-                <div class="card-body demo-vertical-spacing demo-only-element">
-                    <div class="input-group">
-                        <span class="input-group-text">Basic &#8377;</span>
-                        <input type="number" class="form-control" placeholder="Amount" name="salary" id="salary" value="{{ $employee->salary }}" aria-label="Amount (to the nearest dollar)" onkeypress="return isNumber(event)">
-                        <span class="input-group-text">.00</span>
-                    </div>
 
-                    <div class="input-group">
-                        <span class="input-group-text">deduction &#8377;</span>
-                        <input type="number" class="form-control" placeholder="Deduction" name="deduction" id="deduction" value="{{ $employee->deduction }}" aria-label="Amount (to the nearest dollar)" onkeypress="return isNumber(event)">
-                        <span class="input-group-text">.00</span>
-                    </div>
-
-                    <div class="input-group">
-                        <span class="input-group-text">Others &#8377;</span>
-                        <input type="number" class="form-control" placeholder="Others" name="others" id="others" value="{{ $employee->others }}" aria-label="Amount (to the nearest dollar)" onkeypress="return isNumber(event)">
-                        <span class="input-group-text">.00</span>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Role & Credential Details -->
         <div class="col-md-6">
@@ -119,7 +83,7 @@
                 <h5 class="card-header">Role & Credential Details</h5>
                 <div class="card-body demo-vertical-spacing demo-only-element">
                     <div class="input-group">
-                        <label class="input-group-text" for="role">Roles</label>
+                        <label class="input-group-text fieldmandatory" for="role">Roles</label>
                         <select class="form-select" id="role" name="role">
                             <option selected>Choose...</option>
                             @foreach($roles as $role)
@@ -129,7 +93,7 @@
                     </div>
 
                     <div class="input-group">
-                        <label class="input-group-text" for="status">Status</label>
+                        <label class="input-group-text fieldmandatory" for="status">Status</label>
                         <select class="form-select" id="status" name="status">
                             <option selected>Choose...</option>
                             <option value="Active" @if($employee->status == 'Active') selected @endif>Active</option>
@@ -139,7 +103,7 @@
                     </div>
 
                     <div class="input-group">
-                        <label class="input-group-text" for="location">Location</label>
+                        <label class="input-group-text fieldmandatory" for="location">Location</label>
                         <select class="form-select" id="location" name="location">
                             <option selected>Choose...</option>
                             @foreach($branches as $branch)
@@ -149,17 +113,17 @@
                     </div>
 
                     <div class="input-group">
-                        <label class="input-group-text" for="emp_id">Emp Id</label>
+                        <label class="input-group-text fieldmandatory" for="emp_id">Emp Id</label>
                         <input type="text" class="form-control" placeholder="Emp_Id" name="emp_id" id="emp_id" value="{{ $employee->emp_id }}" readonly>
                     </div>
 
                     <div class="input-group">
-                        <span class="input-group-text">@</span>
+                        <span class="input-group-text fieldmandatory">@</span>
                         <input type="text" class="form-control" placeholder="User Name" name="user_name" id="user_name" value="{{ $employee->user_name }}" aria-label="Username">
                     </div>
 
                     <div class="input-group">
-                        <span class="input-group-text">@</span>
+                        <span class="input-group-text fieldmandatory">@</span>
                         <input type="password" class="form-control" placeholder="Password" name="password" id="password" aria-label="Password">
                     </div>
                 </div>

@@ -137,14 +137,16 @@
 <table class="table table-bordered" style="margin-bottom: 20px;" id="customer_report">
     <thead style="background-color: #aed6f1;">
         <tr>
-            <th>Customer ID</th>
+            <th>Cus ID</th>
             <th>Name</th>
             <th>Phone Number</th>
             <th>PinCode</th>
             <th>City</th>
             <th>Status</th>
-            <th data-export="hidden">Sandha</th>
+            <th data-export="hidden">Plan</th>
             <th>Ref 2</th>
+            <th>Added By / Date</th>
+            <th>Updated By  / Date</th>
         </tr>
     </thead>
     <tbody>
@@ -153,11 +155,27 @@
                 <td>{{ $customer->customer_id }}</td>
                 <td>{{ $customer->first_name." ".$customer->last_name }}</td>
                 <td>{{ $customer->phone_number }}</td>
-                <td>{{ $customer->customerpincode->pin_code." - ".$customer->customerpincode->name }}</td>
-                <td>{{ $customer->customercity->name}}</td>
+                <td>
+    {{ $customer->customerpincode && $customer->customerpincode->pin_code && $customer->customerpincode->name
+        ? $customer->customerpincode->pin_code . " - " . $customer->customerpincode->name
+        : 'N/A' }}
+</td>
+
+
+                <td>{{ isset($customer->customercity->name)?$customer->customercity->name:"N/A"}}</td>
                 <td>{{ $customer->status }}</td>
-                <td data-export="hidden">{{ $customer->sandha_plan }}</td> <!-- Hidden in export -->
+                <td data-export="hidden">{{ (optional($customer->sandhas)->sandha_name ?? 'Unknown') }}</td> <!-- Hidden in export -->
                 <td>{{ $customer->r_name1 }}</td> <!-- Hidden in export -->
+                <td>
+
+             {{ $customer->created_at . " / " . (optional($customer->addedByUser)->first_name ?? 'N/A') . ' (' . (optional($customer->addedByUser)->emp_id ?? 'N/A') . ')' }}
+
+            </td>
+
+            <td>
+            {{ $customer->updated_at . " / " . (optional($customer->updatedByUser)->first_name ?? 'N/A') . ' (' . (optional($customer->updatedByUser)->emp_id ?? 'N/A') . ')' }}
+
+</td>
             </tr>
 
         @endforeach
